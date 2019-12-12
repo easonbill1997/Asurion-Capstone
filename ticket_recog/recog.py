@@ -63,13 +63,12 @@ def add_new_junk(inputname):
 def recluster(inputname, outputname):#given a new kmdf/sentence df, it can reoutput a new cluster csv
     df = pickle.load(open(inputname, 'rb'), encoding='utf-8')
     cluster = df.clusters
-    label = df.label
     cluster_list = list(set(cluster))
     label_list = []
     for item in cluster_list: 
-        temp = int(np.argwhere(cluster==item)[0])
-        label_list.append(label[temp])
-        cluster_df = pd.DataFrame({'cluster':cluster_list, 'label':label_list})
+        temp = df[df.clusters == item].label.iloc[0]
+        label_list.append(temp)
+    cluster_df = pd.DataFrame({'cluster':cluster_list, 'label':label_list})
     cluster_df.to_csv(outputname)
     return cluster_df
 
