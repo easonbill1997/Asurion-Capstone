@@ -99,6 +99,26 @@ def fit_kmeans(ticket):
     for line in none_line: 
         sentences_splited = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s',line)
         for sentence in sentences_splited:
+            #manually detect some junk
+            isjunk = 0
+            p=re.compile(r'[-,$()#+&* ]')
+            t=sentence
+            
+            punc_detect=re.findall(p,t)
+            if len(punc_detect)/len(t)>=0.8: isjunk = 1
+            #by space: filture by no space but more than 10 letter or numbers
+            n=re.compile('[^\s-]{10,}')
+            space_detect=re.findall(n,t)
+            space_detect
+            total_len=0
+            for i in range(0,len(space_detect)):
+                total_len+=len(space_detect[i])
+            if total_len/len(t)>=0.8: isjunk = 1
+            
+            if isjunk == 1: 
+                junk_sentence.append(sentence)
+                continue
+            
             text = tf.convert_to_tensor([sentence])
             text_embed = embed(text)
             text_embed = np.asarray(text_embed["outputs"])
@@ -112,7 +132,12 @@ def fit_kmeans(ticket):
             elif sentence_df[sentence_df.cluster == cluster].label.iloc[0] == 'Useless':
                 junk_sentence.append(sentence)
             else: useful_sentence.append(sentence)
-    return [junk_line, junk_sentence, greetings, ident, useful_sentence]
+    junk_line = '.'.join(junk_line)
+    junk_sentence = '.'.join(junk_sentence)
+    greetings = '.'.join(greetings)
+    ident = '.'.join(ident)
+    useful_sentence = '.'.join(useful_sentence)
+    return {'junk_line':junk_line, 'junk_sentence':junk_sentence, 'greetings':greetings, 'ident':ident, 'useful_sentence':useful_sentence}
 
 
 

@@ -15,7 +15,5 @@ from ticket_recog import clean
 #can type your code here
 ticket = 'Hey\n I just want to cancel this order. Thank you. Name_hidden'
 
-clean.clean(ticket)
 recog.fit_kmeans(ticket)
 
-os.chdir('/Users/byc/Desktop/ticket recognization')
